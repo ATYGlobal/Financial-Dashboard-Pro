@@ -1,117 +1,266 @@
-# Sistema Financiero PRO — PWA
+🚀 Sistema Financiero PRO — PWA
 
-## Requisitos
-- Node.js 18+
-- Cuenta Supabase
-- Cuenta Vercel (para despliegue)
+Control financiero realista, basado en escenarios, diseñado para tomar decisiones con datos, no con intuición.
 
-## 1. Clonar e instalar
+⸻
 
-git clone <tu-repo>
-cd sistema-financiero
+🧠 Filosofía del sistema
+
+Este proyecto nace de una idea simple pero poderosa:
+
+No gestionas dinero. Gestionas escenarios.
+
+* Conservador → supervivencia
+* Realista → estabilidad
+* Optimista → crecimiento
+
+La app no solo registra… anticipa.
+
+⸻
+
+⚙️ Stack tecnológico
+
+* Next.js 14 (App Router)
+* TypeScript
+* Supabase (DB + Auth + RLS)
+* TailwindCSS
+* Recharts
+* PWA (next-pwa)
+
+⸻
+
+📦 Requisitos
+
+* Node.js 18+
+* Cuenta en Supabase
+* Cuenta en Vercel
+
+⸻
+
+🧩 1. Instalación
+
+git clone https://github.com/ATYGlobal/Financial-Dashboard-Pro.git
+cd Financial\ Dashboard\ Pro
 npm install
 
-## 2. Configurar Supabase
+⸻
 
-1. Crear proyecto en supabase.com
-2. Ir a SQL Editor y ejecutar `/db/schema.sql`
-3. Ejecutar `/db/seed.sql` para datos iniciales de prueba
-4. Copiar URL y anon key del proyecto
+🗄️ 2. Configuración de Supabase
 
-## 3. Variables de entorno
+1. Crear proyecto en 👉 https://supabase.com
+2. Ir a SQL Editor
+3. Ejecutar:
+
+-- Esquema
+/db/schema.sql
+-- Datos iniciales
+/db/seed.sql
+
+4. Ir a Settings → API
+5. Copiar:
+
+* NEXT_PUBLIC_SUPABASE_URL
+* NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+⸻
+
+🔐 3. Variables de entorno
 
 cp .env.local.example .env.local
-# Editar .env.local con tus valores reales
 
-## 4. Ejecutar en desarrollo
+Editar .env.local:
+
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=... # SOLO para importación Excel
+
+⸻
+
+🧪 4. Desarrollo local
 
 npm run dev
-# Abre http://localhost:3000
 
-## 5. Importar Excel (opcional)
+Abrir:
 
-# Asegúrate de tener SUPABASE_SERVICE_ROLE_KEY en .env.local
-npm run import -- ./Sistema\ Financiero\ PRO.xlsx
+http://localhost:3000
 
-# El script lee las hojas "Ingresos" y "Gastos"
-# Las columnas esperadas: Descripción, Tipo, Categoría, Importe mensual, Inicio, Fin, Escenario, Estado, Notas
+⸻
 
-## 6. Desplegar en Vercel
+📊 5. Importación desde Excel (opcional)
 
-npm install -g vercel
-vercel
+npm run import -- "./Sistema Financiero PRO.xlsx"
 
-# En el dashboard de Vercel → Settings → Environment Variables
-# Añadir: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
+⚠️ Requisitos:
 
-## 7. Instalar como PWA
+* .env.local con SUPABASE_SERVICE_ROLE_KEY
+* Hojas:
+    * INGRESOS
+    * GASTOS
 
-En Chrome/Safari mobile:
-- Abrir la URL de la app
-- Menú → "Añadir a pantalla de inicio" / "Instalar app"
+Columnas esperadas
 
-## Estructura de escenarios
+INGRESOS
 
-| Escenario    | Rank | Descripción                                    |
-|--------------|------|------------------------------------------------|
-| Conservador  | 1    | Solo ingresos/gastos con scenario = 1          |
-| Realista     | 2    | scenario <= 2 (incluye Conservador + Realista) |
-| Optimista    | 3    | Todos los items (scenario 1, 2 y 3)            |
+* DESCRIPCIÓN
+* TIPO
+* CATEGORÍA
+* IMPORTE MES (€)
+* FECHA INICIO / FIN
+* ESCENARIO
+* ESTADO
 
-## Lógica de forecast
+GASTOS
 
-Un ingreso o gasto aplica en un mes si:
-- start_date <= último día del mes
-- end_date IS NULL OR end_date >= primer día del mes
-- scenario <= active_scenario (configuración)
+* DESCRIPCIÓN
+* CATEGORÍA / SUBCATEGORÍA
+* IMPORTE MES (€)
+* TIPO
+* PRIORIDAD
+* ESCENARIO
+* ESTADO
 
-## Regla histórico
+⸻
 
-Los meses marcados como "cerrado" no se recalculan.
-El forecast puede cambiar; el histórico real es inmutable.
+🧮 Lógica del sistema
+
+✔️ Regla de inclusión
+
+Un item aplica si:
+
+* start_date <= fin del mes
+* end_date IS NULL OR >= inicio del mes
+* scenario <= active_scenario
+
+⸻
+
+🎯 Escenarios
+
+Escenario	Nivel	Qué incluye
+Conservador	1	Solo lo seguro
+Realista	2	Base + crecimiento probable
+Optimista	3	Todo
+
+⸻
+
+📈 Forecast
+
+* Horizonte configurable (6–24 meses)
+* Balance mensual + acumulado
+* Detección automática de:
+    * Déficits
+    * Dependencia de ayudas
+    * Exceso de gasto
+
+⸻
+
+📜 Histórico (clave del sistema)
+
+🔒 Los datos reales no se recalculan
+
+* Cada mes cerrado = snapshot inmutable
+* El forecast cambia → el histórico NO
+
+Esto es lo que convierte la app en herramienta de decisión real.
+
+⸻
+
+🧱 Estructura del proyecto
 
 sistema-financiero/
 ├── app/
-│   ├── layout.tsx
-│   ├── page.tsx                    → redirect a /dashboard
-│   ├── dashboard/page.tsx
-│   ├── incomes/page.tsx
-│   ├── expenses/page.tsx
-│   ├── forecast/page.tsx
-│   ├── scenarios/page.tsx
-│   ├── history/page.tsx
-│   └── settings/page.tsx
+│   ├── dashboard/
+│   ├── incomes/
+│   ├── expenses/
+│   ├── forecast/
+│   ├── scenarios/
+│   ├── history/
+│   └── settings/
 ├── components/
-│   ├── layout/
-│   │   ├── Sidebar.tsx
-│   │   └── MobileNav.tsx
 │   ├── ui/
-│   │   ├── KPICard.tsx
-│   │   ├── DataTable.tsx
-│   │   ├── AlertBanner.tsx
-│   │   └── Badge.tsx
 │   ├── forms/
-│   │   ├── IncomeForm.tsx
-│   │   └── ExpenseForm.tsx
-│   └── charts/
-│       ├── IncomeExpenseChart.tsx
-│       └── BalanceChart.tsx
+│   ├── charts/
+│   └── layout/
 ├── lib/
-│   ├── supabase.ts
-│   ├── calculations.ts
-│   ├── scenarios.ts
-│   ├── dates.ts
-│   └── alerts.ts
-├── types/
-│   └── index.ts
 ├── db/
-│   ├── schema.sql
-│   └── seed.sql
 ├── scripts/
-│   └── import-excel.ts
 ├── public/
-│   ├── manifest.json
-│   └── icons/
-├── next.config.js
-├── tailwind.config.ts
-└── .env.local.example
+└── types/
+
+⸻
+
+📱 PWA
+
+Instalación
+
+* Android (Chrome) → “Instalar app”
+* iOS (Safari) → “Añadir a pantalla de inicio”
+
+Features
+
+* Offline básico
+* Modo standalone
+* Iconos personalizados
+
+⸻
+
+🚀 Deploy en Vercel
+
+1. Ir a 👉 https://vercel.com
+2. Importar repo
+3. Configurar variables:
+
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+4. Deploy
+
+⸻
+
+⚠️ Buenas prácticas
+
+No subir:
+
+.env.local
+node_modules
+.next
+
+⸻
+
+🧨 Problemas comunes
+
+❌ “Missing script dev”
+
+➡️ Estás fuera del proyecto
+
+⸻
+
+❌ “Cannot find module dotenv”
+
+npm install -D dotenv
+
+⸻
+
+❌ Supabase error (RLS)
+
+➡️ Crear usuario o revisar policies
+
+⸻
+
+❌ Import Excel falla
+
+➡️ Revisar:
+
+* nombres en MAYÚSCULAS
+* columnas exactas
+
+⸻
+
+🧭 Roadmap (visión real)
+
+* Multi-user (familia)
+* Alertas push reales
+* Integración bancaria (PSD2)
+* IA: predicción de gasto
+* Export fiscal automático
+
+⸻
