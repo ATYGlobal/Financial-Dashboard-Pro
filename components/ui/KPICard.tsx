@@ -1,7 +1,8 @@
 import { fmt } from "@/lib/calculations";
 import { ReactNode } from "react";
 
-type Color = "default" | "blue" | "green" | "red" | "amber" | "purple";
+type Color = "default" | "blue" | "green" | "red" | "amber" | "purple" | 'orange';
+
 
 interface Props {
   label: string;
