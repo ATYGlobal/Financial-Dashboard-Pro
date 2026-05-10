@@ -1,4 +1,4 @@
-import type { AlertItem } from '@/types';
+import type { AlertItem } from "@/types";
 
 export default function AlertBanner({ alerts }: { alerts: AlertItem[] }) {
   if (!alerts.length) return null;
@@ -7,14 +7,18 @@ export default function AlertBanner({ alerts }: { alerts: AlertItem[] }) {
       {alerts.map((a, i) => (
         <div
           key={i}
-          className={`rounded px-4 py-2 text-sm flex items-center gap-2 ${
-            a.severity === 'error'
-              ? 'bg-red-50 text-red-800 border border-red-200'
-              : 'bg-amber-50 text-amber-800 border border-amber-200'
+          className={`flex items-start gap-3 rounded-xl px-4 py-3 text-sm border ${
+            a.severity === "error"
+              ? "bg-red-50 text-red-800 border-red-100"
+              : "bg-amber-50 text-amber-800 border-amber-100"
           }`}
         >
-          <span>{a.severity === 'error' ? '🔴' : '🟡'}</span>
-          {a.message}
+          <span className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-white text-[10px] font-bold ${
+            a.severity === "error" ? "bg-red-500" : "bg-amber-500"
+          }`}>
+            !
+          </span>
+          <span className="font-medium leading-snug">{a.message}</span>
         </div>
       ))}
     </div>
